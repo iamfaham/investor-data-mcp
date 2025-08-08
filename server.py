@@ -8,6 +8,7 @@ from supabase import create_client, Client
 # load_dotenv()
 
 port = int(os.environ.get("PORT", "8000"))
+table_name = os.environ.get("TABLE_NAME")
 
 mcp = FastMCP(
     name="VC Data Server",
@@ -106,7 +107,7 @@ async def get_investor_data(limit: Optional[int] = None) -> str:
     """
     try:
         data = fetch_data_from_supabase(
-            table_name="dec-2024",
+            table_name=table_name,
             select_columns=[
                 "Investor name",
                 "Website",
@@ -234,7 +235,7 @@ async def search_investors_by_criteria(
             filters["Global HQ"] = hq_location
 
         data = fetch_data_from_supabase(
-            table_name="dec-2024",
+            table_name=table_name,
             select_columns=[
                 "Investor name",
                 "Website",
@@ -308,7 +309,7 @@ async def get_available_investor_types() -> str:
     try:
         # Get all investor types from the database
         data = fetch_data_from_supabase(
-            table_name="dec-2024",
+            table_name=table_name,
             select_columns=["Investor type"],
             limit=None,  # Get all records to find unique types
         )
@@ -350,7 +351,7 @@ async def get_available_countries() -> str:
     try:
         # Get all countries from the database
         data = fetch_data_from_supabase(
-            table_name="dec-2024",
+            table_name=table_name,
             select_columns=["Countries of investment"],
             limit=None,  # Get all records to find unique countries
         )
@@ -428,7 +429,7 @@ async def analyze_investment_stages() -> str:
     """
     try:
         data = fetch_data_from_supabase(
-            table_name="dec-2024",
+            table_name=table_name,
             select_columns=["Stage of investment"],
             limit=None,
         )
@@ -486,7 +487,7 @@ async def find_investors_by_cheque_size(
     try:
         # Get all investors with cheque size data
         data = fetch_data_from_supabase(
-            table_name="dec-2024",
+            table_name=table_name,
             select_columns=[
                 "Investor name",
                 "Website",
@@ -588,7 +589,7 @@ async def analyze_investment_thesis() -> str:
     """
     try:
         data = fetch_data_from_supabase(
-            table_name="dec-2024",
+            table_name=table_name,
             select_columns=[
                 "Investment thesis",
                 "Investor type",
@@ -703,7 +704,7 @@ async def get_investor_statistics() -> str:
     """
     try:
         data = fetch_data_from_supabase(
-            table_name="dec-2024",
+            table_name=table_name,
             select_columns=[
                 "Investor name",
                 "Investor type",
@@ -819,7 +820,7 @@ async def find_similar_investors(
     try:
         # First, find the target investor
         target_data = fetch_data_from_supabase(
-            table_name="dec-2024",
+            table_name=table_name,
             select_columns=[
                 "Investor name",
                 "Investor type",
@@ -841,7 +842,7 @@ async def find_similar_investors(
 
         # Find similar investors
         similar_data = fetch_data_from_supabase(
-            table_name="dec-2024",
+            table_name=table_name,
             select_columns=[
                 "Investor name",
                 "Website",

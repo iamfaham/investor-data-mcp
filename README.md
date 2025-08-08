@@ -14,12 +14,13 @@ A Model Context Protocol (MCP) server that exposes tools, resources, and prompts
 ## Requirements
 
 - Python 3.12+
-- Supabase project with an OpenVC-like table named `dec-2024`
+- Supabase project
 
 Environment variables (set in your shell or a `.env` file):
 
 - `SUPABASE_URL`
 - `SUPABASE_KEY`
+- `SUPABASE_TABLE`
 - `PORT` (optional; defaults to `8000`)
 
 Example `.env`:
@@ -27,6 +28,7 @@ Example `.env`:
 ```env
 SUPABASE_URL=https://your-project-id.supabase.co
 SUPABASE_KEY=your-supabase-anon-or-service-role-key
+SUPABASE_TABLE=dec-2024
 PORT=8000
 ```
 
@@ -152,7 +154,7 @@ The container exposes the MCP endpoint at `http://localhost:8000/mcp`.
 
 ## Data Schema Expectations
 
-Expected table: `dec-2024` with columns such as:
+Expected table (configurable via `SUPABASE_TABLE` env var) with columns such as:
 
 - `Investor name`
 - `Website`
@@ -164,7 +166,7 @@ Expected table: `dec-2024` with columns such as:
 - `First cheque minimum`
 - `First cheque maximum`
 
-Update the `table_name` or selected columns in `server.py` if your schema differs.
+Update the `SUPABASE_TABLE` environment variable or selected columns in `server.py` if your schema differs.
 
 ---
 
@@ -193,7 +195,7 @@ tools = await client.get_tools()
 ## Troubleshooting
 
 - Ensure `SUPABASE_URL` and `SUPABASE_KEY` are set (env or `.env`).
-- Verify the Supabase table `dec-2024` exists and column names match.
+- Verify the Supabase table (`SUPABASE_TABLE` env var) exists and column names match.
 - Set `GROQ_API_KEY` to enable LangChain agent testing.
 - Adjust `PORT` if you have port conflicts.
 
@@ -201,7 +203,7 @@ tools = await client.get_tools()
 
 ## Data Source
 
-The investor data is sourced from [OpenVC](https://openvc.co/), a comprehensive database of venture capital investors worldwide. The dataset was last updated in December 2024, providing current information on investor preferences, investment stages, thesis, and contact details.
+The investor data is sourced from [OpenVC](https://openvc.app/), a comprehensive database of venture capital investors worldwide. The dataset was last updated in December 2024, providing current information on investor preferences, investment stages, thesis, and contact details.
 
 ## License and Attribution
 
