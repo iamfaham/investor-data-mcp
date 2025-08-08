@@ -1,109 +1,208 @@
-# VC Data MCP Server
+## VC Data MCP Server
 
-A Model Context Protocol (MCP) server that provides tools and resources for fetching and analyzing venture capital investor data from the OpenVC database.
+A Model Context Protocol (MCP) server that exposes tools, resources, and prompts for fetching and analyzing venture capital investor data from a Supabase-hosted OpenVC dataset.
 
-## Features
+### Highlights
 
-- **Investor Data Access**: Fetch comprehensive investor information including names, websites, investment stages, and thesis
-- **Advanced Search**: Search investors by type, investment stage, or country
-- **Data Analysis**: Get insights about the VC investment landscape
-- **Real-time Updates**: Access to the latest investor data from OpenVC database
+- **Investor data access**: Names, websites, HQ, countries, stages, cheque sizes, thesis
+- **Flexible search**: Filter by investor type, investment stage, country of investment, or HQ location
+- **Analytics**: Stage distribution, database stats, thesis theme analysis, similar investors
+- **MCP-native**: Tools/resources/prompts consumable by any MCP-compatible client
+
+---
+
+## Requirements
+
+- Python 3.12+
+- Supabase project with an OpenVC-like table named `dec-2024`
+
+Environment variables (set in your shell or a `.env` file):
+
+- `SUPABASE_URL`
+- `SUPABASE_KEY`
+- `PORT` (optional; defaults to `8000`)
+
+Example `.env`:
+
+```env
+SUPABASE_URL=https://your-project-id.supabase.co
+SUPABASE_KEY=your-supabase-anon-or-service-role-key
+PORT=8000
+```
+
+---
 
 ## Setup
 
-1. Install dependencies:
+Install dependencies (recommended for the included test clients):
 
 ```bash
-pip install -e .
+pip install -r requirements.txt
 ```
 
-2. Create a `.env` file in the project root with your Supabase credentials:
-
-```
-SUPABASE_URL=https://your-project-id.supabase.co
-SUPABASE_KEY=your-supabase-anon-key-or-service-role-key
-PORT=8003
-```
-
-You can find the Supabase values in your Supabase project dashboard under Settings > API.
-
-## Running the MCP Server
-
-Start the server:
+Alternatively, install from `pyproject.toml`:
 
 ```bash
-python main.py
+pip install .
 ```
 
-The server will run on `http://localhost:8003` with the MCP endpoint available at `http://localhost:8003/mcp`.
+---
+
+## Run the MCP Server Locally
+
+```bash
+python server.py
+```
+
+On startup, the server prints its MCP endpoint. By default:
+
+- MCP endpoint: `http://localhost:8000/mcp`
+
+Change the port by setting `PORT`.
+
+---
 
 ## Available Tools
 
-### 1. `get_investor_data`
+- `get_investor_data(limit?: int)`
+- `search_investors_by_criteria(investor_type?: str, stage?: str, country?: str, hq_location?: str, limit?: int)`
+- `get_available_investor_types()`
+- `get_available_countries()`
+- `get_location_search_guide()`
+- `analyze_investment_stages()`
+- `find_investors_by_cheque_size(min_amount?: str, max_amount?: str, limit?: int)`
+- `analyze_investment_thesis()`
+- `get_investor_statistics()`
+- `find_similar_investors(investor_name: str, limit?: int)`
 
-Fetches investor data from the OpenVC database.
+Notes:
 
-**Parameters:**
+- `country` accepts common names/codes (e.g., "USA", "UK").
+- Cheque size filtering is string-based and approximate.
 
-- `limit` (Optional[int]): Maximum number of records to return
+---
 
-**Returns:** Formatted string containing investor records with:
+## Resources and Prompts
 
-- Investor name
-- Website
-- Global HQ
-- Countries of investment
-- Stage of investment
-- Investment thesis
-- Investor type
-- First cheque minimum and maximum
+- Resource: `docs://vc_data_guide`
+- Prompt: `analyze_investor_data(investor_data: str)`
 
-### 2. `search_investors_by_criteria`
+---
 
-Search for investors based on specific criteria.
+## Test Locally (LangChain + MCP)
 
-**Parameters:**
+`test_client_local.py` demonstrates connecting a LangChain agent to the local MCP server via `langchain-mcp-adapters` and `ChatGroq`.
 
-- `investor_type` (Optional[str]): Type of investor (e.g., "Angel", "VC", "PE")
-- `stage` (Optional[str]): Investment stage (e.g., "Seed", "Series A", "Growth")
-- `country` (Optional[str]): Country of investment
-- `limit` (Optional[int]): Maximum number of records to return
+Prerequisites:
 
-**Returns:** Formatted string containing matching investor records
+- Local server running (`python server.py`)
+- `.env` contains `GROQ_API_KEY` for ChatGroq
 
-## Available Resources
+Run:
 
-### `docs://vc_data_guide`
+```bash
+python test_client_local.py
+```
 
-Provides guidance on interpreting VC investor data, including:
+It exercises multiple tools (investor data, search, analytics) and prints truncated outputs.
 
-- Investor types (Angel, VC, PE, CVC)
-- Investment stages (Pre-seed, Seed, Series A, etc.)
-- Understanding first cheque ranges
-- Interpreting investment thesis
+---
 
-## Available Prompts
+## Test a Smithery Deployment
 
-### `analyze_investor_data`
+`test_client_smithery.py` validates a Smithery-hosted deployment.
 
-Analyzes VC investor data and provides insights about the investment landscape, including:
+Prerequisites in `.env`:
 
-- Geographic distribution of investors
-- Investment stage preferences
-- Typical investment sizes
-- Investment thesis patterns
-- Notable trends and insights
+- `SMITHERY_API_KEY`
+- `SMITHERY_PROFILE`
+- Optional: `GROQ_API_KEY` (for LangChain tests; otherwise skipped)
 
-## Example Usage
+Run:
 
-The MCP server can be integrated with any MCP-compatible client. The tools are designed to be used when users ask for:
+```bash
+python test_client_smithery.py
+```
 
-- Investor information
-- VC data
-- Startup funding data
-- Investment landscape analysis
-- Finding investors by specific criteria
+It first checks a direct MCP connection to a Smithery URL, then (optionally) runs LangChain agent tests. The Smithery build is configured via `smithery.yaml` and the container via `Dockerfile`.
+
+---
+
+## Docker
+
+Build:
+
+```bash
+docker build -t vc-data-mcp .
+```
+
+Run (provide Supabase env vars):
+
+```bash
+docker run --rm -p 8000:8000 \
+  -e SUPABASE_URL="https://your-project-id.supabase.co" \
+  -e SUPABASE_KEY="your-supabase-key" \
+  -e PORT=8000 \
+  vc-data-mcp
+```
+
+The container exposes the MCP endpoint at `http://localhost:8000/mcp`.
+
+---
+
+## Data Schema Expectations
+
+Expected table: `dec-2024` with columns such as:
+
+- `Investor name`
+- `Website`
+- `Global HQ`
+- `Countries of investment`
+- `Stage of investment`
+- `Investment thesis`
+- `Investor type`
+- `First cheque minimum`
+- `First cheque maximum`
+
+Update the `table_name` or selected columns in `server.py` if your schema differs.
+
+---
+
+## Integration Notes
+
+- Transport is `streamable-http`; the MCP endpoint is `/mcp`.
+- You can discover tools with an MCP client directly or use LangChain via `langchain-mcp-adapters`.
+
+Minimal MCP client example (see `test_client_local.py` for a full example):
+
+```python
+from langchain_mcp_adapters.client import MultiServerMCPClient
+
+client = MultiServerMCPClient({
+    "vc_data": {
+        "url": "http://localhost:8000/mcp",
+        "transport": "streamable_http",
+    }
+})
+
+tools = await client.get_tools()
+```
+
+---
+
+## Troubleshooting
+
+- Ensure `SUPABASE_URL` and `SUPABASE_KEY` are set (env or `.env`).
+- Verify the Supabase table `dec-2024` exists and column names match.
+- Set `GROQ_API_KEY` to enable LangChain agent testing.
+- Adjust `PORT` if you have port conflicts.
+
+---
 
 ## Data Source
 
-This server connects to the OpenVC database, which contains comprehensive information about venture capital investors worldwide, including their investment preferences, thesis, and contact information.
+The investor data is sourced from [OpenVC](https://openvc.co/), a comprehensive database of venture capital investors worldwide. The dataset was last updated in December 2024, providing current information on investor preferences, investment stages, thesis, and contact details.
+
+## License and Attribution
+
+This server queries an OpenVC-sourced dataset hosted in Supabase. Ensure compliance with data licensing and any applicable terms for your dataset copy.

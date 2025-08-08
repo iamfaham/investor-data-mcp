@@ -22,7 +22,7 @@ if not smithery_api_key or not smithery_profile:
     )
     exit(1)
 
-url = f"https://server.smithery.ai/@dot0504/test-vc-mcp/mcp?api_key={smithery_api_key}&profile={smithery_profile}"
+url = f"https://server.smithery.ai/@iamfaham/investor-data-mcp/mcp?api_key={smithery_api_key}&profile={smithery_profile}"
 
 
 async def test_mcp_direct():
