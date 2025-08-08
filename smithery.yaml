@@ -1,0 +1,17 @@
+runtime: "container"
+build:
+  dockerfile: "Dockerfile"
+  dockerBuildPath: "."
+startCommand:
+  type: "http"
+  configSchema:
+    type: "object"
+    properties:
+      PORT:
+        type: "string"
+        description: "Port to run the server on"
+        default: "8000"
+  env:
+    SUPABASE_URL: "Your Supabase project URL"
+    SUPABASE_KEY: "Your Supabase API key"
+    PORT: "{{config.PORT}}"
