@@ -1,14 +1,13 @@
 from mcp.server.fastmcp import FastMCP
 import os
 from typing import Dict, List, Any, Optional
-
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 from supabase import create_client, Client
 
-# load_dotenv()
+load_dotenv()
 
-port = int(os.environ.get("PORT", "8000"))
-table_name = os.environ.get("TABLE_NAME")
+port = int(os.getenv("PORT"))
+table_name = os.getenv("TABLE_NAME")
 
 mcp = FastMCP(
     name="VC Data Server",
@@ -41,10 +40,8 @@ def fetch_data_from_supabase(
         Exception: If there's an error connecting to Supabase or fetching data
     """
     # Get Supabase credentials from environment variables
-    # supabase_url = os.environ.get("SUPABASE_URL") or os.getenv("SUPABASE_URL")
-    supabase_url = os.environ.get("SUPABASE_URL")
-    # supabase_key = os.environ.get("SUPABASE_KEY") or os.getenv("SUPABASE_KEY")
-    supabase_key = os.environ.get("SUPABASE_KEY")
+    supabase_url = os.getenv("SUPABASE_URL")
+    supabase_key = os.getenv("SUPABASE_KEY")
 
     if not supabase_url or not supabase_key:
         raise ValueError(

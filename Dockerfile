@@ -4,7 +4,7 @@ WORKDIR /app
 # Install Python dependencies manually to avoid corrupted requirements.txt
 RUN pip install --no-cache-dir supabase mcp
 # Copy application code
-COPY server.py ./
+COPY . .
 # Expose the port
 EXPOSE 8000
 # Set environment variables

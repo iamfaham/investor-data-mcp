@@ -1,4 +1,4 @@
-## VC Data MCP Server
+## Investor Data MCP Server
 
 A Model Context Protocol (MCP) server that exposes tools, resources, and prompts for fetching and analyzing venture capital investor data from a Supabase-hosted OpenVC dataset.
 
@@ -135,7 +135,7 @@ It first checks a direct MCP connection to a Smithery URL, then (optionally) run
 Build:
 
 ```bash
-docker build -t vc-data-mcp .
+docker build -t investor-data-mcp .
 ```
 
 Run (provide Supabase env vars):
@@ -144,8 +144,9 @@ Run (provide Supabase env vars):
 docker run --rm -p 8000:8000 \
   -e SUPABASE_URL="https://your-project-id.supabase.co" \
   -e SUPABASE_KEY="your-supabase-key" \
+  -e TABLE_NAME="table_1" \
   -e PORT=8000 \
-  vc-data-mcp
+  investor-data-mcp
 ```
 
 The container exposes the MCP endpoint at `http://localhost:8000/mcp`.
@@ -181,7 +182,7 @@ Minimal MCP client example (see `test_client_local.py` for a full example):
 from langchain_mcp_adapters.client import MultiServerMCPClient
 
 client = MultiServerMCPClient({
-    "vc_data": {
+    "investor_data": {
         "url": "http://localhost:8000/mcp",
         "transport": "streamable_http",
     }
