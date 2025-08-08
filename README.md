@@ -21,7 +21,6 @@ Environment variables (set in your shell or a `.env` file):
 - `SUPABASE_URL`
 - `SUPABASE_KEY`
 - `SUPABASE_TABLE`
-- `PORT` (optional; defaults to `8000`)
 
 Example `.env`:
 
@@ -29,7 +28,6 @@ Example `.env`:
 SUPABASE_URL=https://your-project-id.supabase.co
 SUPABASE_KEY=your-supabase-anon-or-service-role-key
 SUPABASE_TABLE=dec-2024
-PORT=8000
 ```
 
 ---
@@ -60,7 +58,6 @@ On startup, the server prints its MCP endpoint. By default:
 
 - MCP endpoint: `http://localhost:8000/mcp`
 
-Change the port by setting `PORT`.
 
 ---
 
@@ -118,7 +115,7 @@ Prerequisites in `.env`:
 
 - `SMITHERY_API_KEY`
 - `SMITHERY_PROFILE`
-- Optional: `GROQ_API_KEY` (for LangChain tests; otherwise skipped)
+- Optional: `GROQ_API_KEY` (for tests; otherwise skipped)
 
 Run:
 
@@ -145,7 +142,6 @@ docker run --rm -p 8000:8000 \
   -e SUPABASE_URL="https://your-project-id.supabase.co" \
   -e SUPABASE_KEY="your-supabase-key" \
   -e TABLE_NAME="table_1" \
-  -e PORT=8000 \
   investor-data-mcp
 ```
 
@@ -198,7 +194,6 @@ tools = await client.get_tools()
 - Ensure `SUPABASE_URL` and `SUPABASE_KEY` are set (env or `.env`).
 - Verify the Supabase table (`SUPABASE_TABLE` env var) exists and column names match.
 - Set `GROQ_API_KEY` to enable LangChain agent testing.
-- Adjust `PORT` if you have port conflicts.
 
 ---
 
@@ -206,6 +201,3 @@ tools = await client.get_tools()
 
 The investor data is sourced from [OpenVC](https://openvc.app/), a comprehensive database of venture capital investors worldwide. The dataset was last updated in December 2024, providing current information on investor preferences, investment stages, thesis, and contact details.
 
-## License and Attribution
-
-This server queries an OpenVC-sourced dataset hosted in Supabase. Ensure compliance with data licensing and any applicable terms for your dataset copy.
